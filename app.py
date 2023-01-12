@@ -8,7 +8,7 @@ async def main():
     await page.goto('https://polr.stationmyr.net/')
     await fill_imput(page, 'http://www.tit.com', 'link-url')
     await push_input(page, 'shorten')
-    shorted = await get_url(page)
+    shorted = await get_input_value(page)
     await go_url(page, shorted)
     await browser.close()
 
@@ -24,7 +24,7 @@ async def test_shorted():
     page, browser = await connect()
     await fill_imput(page, 'http://www.tit.com', 'link-url')
     await push_input(page, 'shorten')
-    shorted = await get_url(page)
+    shorted = await get_input_value(page, 'link-url')
     await go_url(page, shorted)
     newurl = page.url
     await browser.close()
@@ -55,17 +55,17 @@ async def push_input(page, submit_name):
     await page.screenshot({'path': 'submit_' + submit_name +'".png'})
 
 
-async def get_url(page):
-    short_url = await page.xpath('//input[@id="short_url"]')
+async def get_input_value(page, input_name ):
+    short_url = await page.xpath('//input[@id="' + input_name + '"]')
     result_url = await short_url[0].getProperty('value')
-    await page.screenshot({'path': 'shortedurl.png'})
+    await page.screenshot({'path': input_name + '.png'})
     result_url_string = await result_url.jsonValue()
     return result_url_string
 
 
 async def go_url(page, url):
     await page.goto(url)
-    await page.screenshot({'path': 'go_url.png'})
+    await page.screenshot({'path': url + '.png'})
 
 
 asyncio.get_event_loop().run_until_complete(main())
